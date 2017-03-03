@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const should = chai.should();
 
 const {DATABASE_URL} = require('../config');
-const {BlogPost} = require('../models');
+const {BlogPost, User} = require('../models');
 const {closeServer, runServer, app} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
@@ -27,7 +27,16 @@ function tearDownDb() {
   });
 }
 
+const fakeUser = {
+   username: faker.internet.userName(),
+   password: '$2a$10$.PtCpY2b6SLexlqOW6LWH.sAG.Qhr/peYIPuApQ3ayFnC9ibwS6gm',
+   firstName: faker.name.firstName(),
+   lastName: faker.name.lastName()
+};
 
+function seedUserData() {
+  return User.create(fakeUser);
+}
 // used to put randomish documents in db
 // so we have data to work with and assert about.
 // we use the Faker library to automatically
@@ -50,6 +59,14 @@ function seedBlogPostData() {
   return BlogPost.insertMany(seedData);
 }
 
+// function seedUser( {
+//   username: faker.internet.userName(),
+//   password: '$2a$10$.PtCpY2b6SLexlqOW6LWH.sAG.Qhr/peYIPuApQ3ayFnC9ibwS6gm',
+//   firstName: faker.name.firstName();
+//   lastName: faker.name.lastName()
+//
+// )};
+
 
 describe('blog posts API resource', function() {
 
@@ -58,7 +75,7 @@ describe('blog posts API resource', function() {
   });
 
   beforeEach(function() {
-    return seedBlogPostData();
+   return Promise.all([seedUserData(), seedBlogPostData()]);
   });
 
   afterEach(function() {
@@ -148,6 +165,7 @@ describe('blog posts API resource', function() {
 
       return chai.request(app)
         .post('/posts')
+        .auth(fakeUser.username, fakeUser.password)
         .send(newPost)
         .then(function(res) {
           res.should.have.status(201);
