@@ -123,8 +123,8 @@ app.post('/posts',
       title: req.body.title,
       content: req.body.content,
       author: {
-        firstName: req.user.firstName,
-        lastName: req.user.lastName
+        firstName: req.body.author.firstName,
+        lastName: req.body.author.lastName
       }
     })
     .then(blogPost => res.status(201).json(blogPost.apiRepr()))

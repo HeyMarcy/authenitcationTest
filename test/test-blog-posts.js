@@ -29,6 +29,7 @@ function tearDownDb() {
 
 const fakeUser = {
    username: faker.internet.userName(),
+   ogpassword: 'test-password',
    password: '$2a$10$.PtCpY2b6SLexlqOW6LWH.sAG.Qhr/peYIPuApQ3ayFnC9ibwS6gm',
    firstName: faker.name.firstName(),
    lastName: faker.name.lastName()
@@ -162,10 +163,18 @@ describe('blog posts API resource', function() {
           },
           content: faker.lorem.text()
       };
+      // const newPost = {
+      //     title: "brians post",
+      //     author: {
+      //       firstName: "brian",
+      //       lastName: "mcminn"
+      //     },
+      //     content: faker.lorem.text()
+      // };
 
       return chai.request(app)
         .post('/posts')
-        .auth(fakeUser.username, fakeUser.password)
+        .auth( fakeUser.username,fakeUser.ogpassword)
         .send(newPost)
         .then(function(res) {
           res.should.have.status(201);
