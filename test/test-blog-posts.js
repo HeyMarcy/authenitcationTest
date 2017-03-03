@@ -206,7 +206,7 @@ describe('blog posts API resource', function() {
     //  2. Make a PUT request to update that post
     //  3. Prove post returned by request contains data we sent
     //  4. Prove post in db is correctly updated
-    it('should update fields you send over', function() {
+    it.only('should update fields you send over', function() {
       const updateData = {
         title: 'cats cats cats',
         content: 'dogs dogs dogs',
@@ -224,10 +224,11 @@ describe('blog posts API resource', function() {
 
           return chai.request(app)
             .put(`/posts/${post.id}`)
+            .auth( fakeUser.username,fakeUser.ogpassword)
             .send(updateData);
         })
         .then(res => {
-          res.should.have.status(201);
+          res.should.have.status(200);
           res.should.be.json;
           res.body.should.be.a('object');
           res.body.title.should.equal(updateData.title);
@@ -261,7 +262,9 @@ describe('blog posts API resource', function() {
         .exec()
         .then(_post => {
           post = _post;
-          return chai.request(app).delete(`/posts/${post.id}`);
+          return chai.request(app)
+          .delete(`/posts/${post.id}`)
+          .auth( fakeUser.username,fakeUser.ogpassword);
         })
         .then(res => {
           res.should.have.status(204);

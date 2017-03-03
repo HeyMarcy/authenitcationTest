@@ -161,7 +161,7 @@ app.put('/posts/:id',
   }
 
   const updated = {};
-  const updateableFields = ['title', 'content'];
+  const updateableFields = ['title', 'content', 'author'];
   updateableFields.forEach(field => {
     if (field in req.body) {
       updated[field] = req.body[field];
@@ -171,7 +171,7 @@ app.put('/posts/:id',
   BlogPost
     .findByIdAndUpdate(req.params.id, {$set: updated}, {new: true})
     .exec()
-    .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
+    .then(updatedPost => res.status(200).json(updatedPost.apiRepr()))
     .catch(err => res.status(500).json({message: 'Something went wrong'}));
 });
 
@@ -223,7 +223,8 @@ function closeServer() {
 // if server.js is called directly (aka, with `node server.js`), this block
 // runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
 if (require.main === module) {
-  runServer().catch(err => console.error(err));
+  runServer()
+    .catch(err => console.error(err));
 };
 
 module.exports = {runServer, app, closeServer};
